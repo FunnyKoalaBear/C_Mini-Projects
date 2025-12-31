@@ -25,7 +25,7 @@ int getop(char line[], int limit)
 		if (isalpha(c)) {
 
 			int nextC; 
-			letterIndex = tolower(c) - 'a';
+			int currentLetterIndex = tolower(c) - 'a';
 
 			//parsing through spaces till next character found 
 			do {
@@ -33,15 +33,16 @@ int getop(char line[], int limit)
 			} while (nextC == ' ');
 
 			if (nextC == '=') {
-				return getop(line, limit);
+				//return getop(line, limit); 
+				return 5;
+				//parsing right side of the equation now  
 			}
 
-			//puts last char back into stdin 
-			ungetch(c);
-			//prints a value if no =
-			sprintf(line, "%.8g", variables[letterIndex]);
-			return NUMBER;
 
+			//prints a value if no =
+			ungetc(nextC, stdin);
+			sprintf(line, "%.8g", variables[currentLetterIndex]);
+			return 4;
 
 		}
 

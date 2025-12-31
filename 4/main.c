@@ -9,7 +9,6 @@
 int main() {
 	
     char line[32];
-
 	
     for (;;) {
 
@@ -32,7 +31,7 @@ int main() {
 			continue; 
 		}
 
-		
+
 		//EOF/operator input 
 		if (scanf("%c", &c) != 1) { 
 			break; 
@@ -40,24 +39,45 @@ int main() {
 
 		//checking for variables
 		if (isalpha(c)) {
-			letterIndex = tolower(c) - 97; 
-			continue; 
+
+			//put back the character scanf read for getchar() in getop() function 
+			ungetc(c, stdin);
+			int tempIndex = tolower(c) - 'a'; 
+			
+			int type = getop(line , sizeof(line));
+
+			if (type == 5) {
+				//equal sign was detected
+				letterIndex = tempIndex;  
+				continue;
+			}
+
+			//if 
+			if (type == 4) {
+				//just letter detected, push it into stack 
+				push(atof(line));
+				continue; 
+			}
+
+			//continue; 
 		}
 
 		//doing arithmetic 
-		label: afterParsing:
+		afterParsing:
 
 			if (c == '\n') {
 				//printing output at the new line key 
 				double output = pop();
-
+				
 				//setting output to a variable if needed
-				if (letterIndex >= 0) {
+				if (letterIndex != -1) {
 					variables[letterIndex] = output;
 					//printf("Vaaraiable is %f\n", variables[letterIndex]);
 				}
-
-				printf("= %.8g\n", output); 
+				
+				printf("= %.8g\n", output);
+				 
+				letterIndex = -1; 
 				continue;
 			}
 
@@ -69,12 +89,12 @@ int main() {
 				case '%':	{ double r = pop(), l = pop();  push(l - r*(int)(l/r)); }	break;
 				default:	printf("unknown operator: %i\n", c);						break;
 			}
+			continue; 
 		
-
+			letterIndex = -1; 
 
     }
 
-	letterIndex = -1; 
     return 0;
 }
 
