@@ -3,10 +3,13 @@
 #include <ctype.h>
 
 #include "stack.h"
+#include "getop.h"
 
-int main()
-{
+
+int main() {
+	
     char line[32];
+
 	
     for (;;) {
 
@@ -17,7 +20,7 @@ int main()
 		c = getchar();
 		if (c == ' ') continue;
 
-		if (c == '+' | c == '-' | c == '\n') {
+		if (c == '+' || c == '-' || c == '\n') {
 			goto afterParsing;
 		}
 		ungetc(c, stdin); 
@@ -35,12 +38,26 @@ int main()
 			break; 
 		} 
 
+		//checking for variables
+		if (isalpha(c)) {
+			letterIndex = tolower(c) - 97; 
+			continue; 
+		}
+
 		//doing arithmetic 
 		label: afterParsing:
 
 			if (c == '\n') {
 				//printing output at the new line key 
-				printf("= %.8g\n", pop()); 
+				double output = pop();
+
+				//setting output to a variable if needed
+				if (letterIndex >= 0) {
+					variables[letterIndex] = output;
+					//printf("Vaaraiable is %f\n", variables[letterIndex]);
+				}
+
+				printf("= %.8g\n", output); 
 				continue;
 			}
 
@@ -57,6 +74,7 @@ int main()
 
     }
 
+	letterIndex = -1; 
     return 0;
 }
 
